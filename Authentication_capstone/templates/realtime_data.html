@@ -1,23 +1,25 @@
 <!-- realtime_data.html -->
-<!-- {% extends "base.html" %} -->
+{% extends "base.html" %}
 {% block content %}
-  <h1>Real-Time Data from Firebase</h1>
+  <h1>Real-Time Data</h1>
   <table>
     <thead>
       <tr>
-        <th>Field 1</th>
-        <th>Field 2</th>
+        <th>Timestamp</th>
+        <th>Temperature (°C)</th>
+        <th>Soil Moisture</th>
+        <th>light Intesity</th>
         <!-- Add more headers as needed -->
       </tr>
     </thead>
     <tbody>
-      {% for item in data %}
-        <tr>
-          <td>{{ item.field1 }}</td>
-          <td>{{ item.field2 }}</td>
-          <!-- Add more fields as needed -->
-        </tr>
-      {% endfor %}
+      <tr>
+        <td>{{ latest_data.timestamp }}</td>
+        <td>{{ latest_data.temperature }}</td>
+        <td>{{ latest_data.soil_moisture }}</td>
+        <td>{{ latest_data.light_intesity }}</td>
+        <!-- Add more fields as needed -->
+      </tr>
     </tbody>
   </table>
 {% endblock %}

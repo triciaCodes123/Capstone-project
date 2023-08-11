@@ -9,12 +9,18 @@
 </head>
 
 <body>
-    <h1>Hello you are logged in.</h1>
+    <h1>Welcome to Smart Irrigation System.</h1>
     <ul>
-        <li><a href="{{ url_for('predict') }}">1.Real-Time Data</a></li> 
-        <li><a href="{{ url_for('predict') }}">2.ML Prediction</a></li>
+        <li><a href="{{ url_for('predict') }}">1.Real-Time Data Display</a></li>
+        <li><a href="{{ url_for('visualization') }}">2.Real-Time Data Visualization </a></li> 
+         
+        
       </ul>
-    <a href="{{url_for('logout')}}">Press here to logout</a>
+      
+      
+    
+      <li><a href="{{ url_for('predict') }}">3.Manual ML Prediction(For technician only)</a></li>
+      <a href="{{url_for('logout')}}">4.Press here to logout</a>
 </body>
 
 </html>

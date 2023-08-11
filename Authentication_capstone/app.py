@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Add the project root directory to the Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -9,6 +15,8 @@ import pandas as pd
 import joblib
 import firebase_admin
 from firebase_admin import credentials, firestore
+# from sensor_data.routes import sensor_data_bp
+from sensor_data.models import SensorData
 
 
 app = Flask(__name__)
@@ -28,8 +36,16 @@ login_manager.login_view = 'login'
 # # Initialize Firestore
 # firebase_db = firestore.client()
 
+# # Register the sensor data blueprint
+# app.register_blueprint(sensor_data_bp)
+
+# # Placeholder for the latest data (replace with real-time data)
+# latest_data = SensorData('2023-08-11 08:30:00', 25.8, 0.5)
+
+
 # Load the trained ML model and scaler
 model = joblib.load('RFC_model.joblib')
+scaler = joblib.load('min_max_scaler.joblib')
 
 # Label encoder for crop types
 label_encoder = {
@@ -85,6 +101,7 @@ def login():
             return redirect(url_for('dashboard'))
     return render_template('login.html', form=form)
 
+
 # Dashboard route
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
@@ -138,7 +155,7 @@ def predict():
                 'SoilMoisture': [SoilMoisture],
                 'temperature': [temperature]
             })
-
+            features = scaler.transform(features)
             # Make prediction using the model
             prediction = model.predict(features)
             prediction_text = outputer(prediction)
@@ -159,6 +176,12 @@ def predict():
             return "Error: {}".format(str(e))
     else:
         return render_template('predict.html', prediction_text='')
+# Route for the real-time visualization
+@app.route('/visualization')
+def visualization():
+    # You can pass any necessary data to the template
+    return render_template('visualization.html')
+
 
 # Function to convert model output to human-readable prediction labels
 def outputer(output):
