@@ -13,10 +13,7 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 import pandas as pd
 import joblib
-import firebase_admin
-from firebase_admin import credentials, firestore
-# from sensor_data.routes import sensor_data_bp
-from sensor_data.models import SensorData
+
 
 
 app = Flask(__name__)
@@ -29,21 +26,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# # Initialize Firebase
-# cred = credentials.Certificate('path/to/your/firebase/serviceAccountKey.json')
-# firebase_admin.initialize_app(cred)
 
-# # Initialize Firestore
-# firebase_db = firestore.client()
-
-# # Register the sensor data blueprint
-# app.register_blueprint(sensor_data_bp)
-
-# # Placeholder for the latest data (replace with real-time data)
-# latest_data = SensorData('2023-08-11 08:30:00', 25.8, 0.5)
-
-
-# Load the trained ML model and scaler
 model = joblib.load('RFC_model.joblib')
 scaler = joblib.load('min_max_scaler.joblib')
 
@@ -160,15 +143,6 @@ def predict():
             prediction = model.predict(features)
             prediction_text = outputer(prediction)
 
-            # # Store prediction in Firestore
-            # firebase_db.collection('predictions').add({
-            #     'CropType': CropType,
-            #     'CropDays': CropDays,
-            #     'temperature': temperature,
-            #     'SoilMoisture': SoilMoisture,
-            #     'prediction': prediction_text,
-            #     'user_id': current_user.id  # Associate the prediction with the user
-            # })
 
             return render_template('predict_result.html', prediction_text=prediction_text)
         except ValueError as e:
@@ -196,19 +170,22 @@ def load_user(user_id):
     # Load a user based on the user_id (required by Flask-Login)
     return User.query.get(int(user_id))
 
-# # Real-time data route
-# @app.route('/realtime', methods=['GET'])
-# @login_required
-# def realtime_data():
-#     # Retrieve and display real-time data from Firebase
-#     # Here's an example of fetching data from a Firestore collection
-#     # and passing it to the template
-#     data = []
-#     # Fetch data from Firebase (replace 'your_collection_name' with the actual collection name)
-#     firebase_data = firebase_db.collection('your_collection_name').get()
-#     for doc in firebase_data:
-#         data.append(doc.to_dict())
-#     return render_template('realtime_data.html', data=data)
+@app.route('/moisture')
+def moisture():
+    return render_template('moisture.html')
+
+@app.route('/temperature')
+def temperature():
+    return render_template('temperature.html')
+
+@app.route('/light')
+def light():
+    return render_template('light.html')
+
+@app.route('/pump')
+def pump():
+    return render_template('pump.html')
+
 
 
 
